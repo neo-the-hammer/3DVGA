@@ -1,0 +1,57 @@
+# Extra packages this repository needs that a stock Google Colab image does not ship.
+#
+#   pip install -r req/requirements.txt
+#   pip install -r req/req_env.txt          <-- this file, second
+#   python -m spacy download en_core_web_sm
+#
+# Colab already provides numpy, scipy, pandas, matplotlib, tqdm, Pillow, imageio, h5py,
+# opencv-python, torch and torchvision, so those are deliberately absent here.
+
+# ---------------------------------------------------------------------------------------
+# PyTorch Geometric -- READ THIS BEFORE ANYTHING ELSE
+# ---------------------------------------------------------------------------------------
+# models/match_module.py calls torch_geometric.nn.knn_graph inside the forward pass, so
+# WITHOUT THIS THE MODEL CANNOT RUN AT ALL -- not training, not evaluation, not the FLOPs
+# measurement. It fails with "'knn_graph' requires 'pyg-lib>=0.6.0'".
+#
+# pyg-lib is NOT on PyPI. `pip install pyg_lib` always fails with "No matching
+# distribution found". It exists only on the PyG wheel index, and the index is keyed by
+# the exact torch build. req/requirements.txt lists pyg_lib / torch_scatter /
+# torch_sparse / torch_cluster / torch_spline_conv as bare names, which is why a plain
+# install of that file does not give you a working model.
+#
+# Resolve the index from the INSTALLED torch version, never a hardcoded one:
+#
+#   TORCH=$(python -c "import torch;print(torch.__version__)")
+#   pip install pyg_lib -f https://data.pyg.org/whl/torch-${TORCH}.html
+#
+# For recent torch builds that index publishes pyg_lib only, and that is sufficient:
+# PyG 2.8 routes knn_graph through pyg-lib, so torch_cluster is not required. Verified
+# here on torch 2.13.0+cu130 with pyg_lib 0.8.0+pt213cu130 (a cp310-abi3 wheel, so it
+# also imports cleanly on Python 3.13).
+
+torch_geometric
+
+# ---------------------------------------------------------------------------------------
+# core repository dependencies missing from Colab
+# ---------------------------------------------------------------------------------------
+
+easydict                 # lib/config.py builds CONF from EasyDict
+plyfile                  # scripts/visualize.py, data/scannet mesh export
+trimesh==2.35.39         # data/scannet/scannet_utils.py -- pinned, the 3.x API differs
+tensorboardX             # lib/solver.py training logs
+thop                     # experiments/complexity/measure_complexity.py parameter counts
+ipdb                     # imported at module scope in several lib/ files
+
+# ---------------------------------------------------------------------------------------
+# parser ablation (experiments/ablation/parsers/)
+# ---------------------------------------------------------------------------------------
+
+spacy                    # variant B, the rule-based parser
+# the model itself is not a pip package -- run this after installing spacy:
+# python -m spacy download en_core_web_sm
+
+transformers             # variant E, the small local language model
+accelerate               # device_map / dtype handling for variant E
+sentencepiece            # ONLY needed for the flan-t5 variant; the Qwen models do not use it
+openai                   # variant A, regenerating the GPT-4o-mini parses (needs OPENAI_API_KEY)

@@ -1,0 +1,21 @@
+plyfile
+opencv-python
+trimesh==2.35.39
+tensorboardX
+easydict
+tqdm
+h5py
+matplotlib
+ipdb
+
+# audio (3D-VGA): frozen speech encoders + wav I/O; one TTS backend for build_audioset.py
+transformers
+soundfile
+#piper-tts  (speech synthesis only; onnxruntime-gpu instead of onnxruntime to synthesise on a GPU)
+
+
+# torch_geometric + pyg_lib are NOT installable from this file: pyg_lib is not on PyPI,
+# and its wheel index is keyed to the exact installed torch build. See req/req_env.txt.
+#pip install torch_geometric
+#TORCH=$(python -c "import torch; print(torch.__version__)")
+#pip install pyg_lib -f "https://data.pyg.org/whl/torch-${TORCH}.html"
