@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPARC Method Guide</title>
+<style>html{color-scheme:light dark}body{margin:0}</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* layout: sticky section index on wide screens, single column of numbered chapters; figures are wide cards that scroll inside themselves */
+:root{
+  --paper:#F5F7F9; --surface:#FFFFFF; --panel:#FAFBFC;
+  --ink:#141922; --body:#39404C; --muted:#5F6A79; --faint:#8D97A4;
+  --rule:#DDE2E8; --rule-soft:#EAEEF2;
+  --audio:#0F7B7F; --audio-tint:#DDF0F0;
+  --geom:#A66A11;  --geom-tint:#F8EAD3;
+  --fuse:#C2255C;  --fuse-tint:#FBE2EB;
+  --froz:#6B7685;  --froz-tint:#E7EAEE;
+  --xtxt:#7C6AA8; --xtxt-tint:#EDE8F6;
+  --loss:#2F6FB5;  --loss-tint:#DEEAF7;
+  --good:#2E7D4F; --warn:#B26A00; --bad:#B3261E;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",ui-sans-serif,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#11151B; --surface:#171C24; --panel:#1B212A;
+    --ink:#EDF1F5; --body:#C2CAD4; --muted:#95A0AD; --faint:#6E7A88;
+    --rule:#2B333E; --rule-soft:#232A34;
+    --audio:#3FC2C6; --audio-tint:#0E3436;
+    --geom:#E0A548;  --geom-tint:#3A2A0E;
+    --fuse:#F1729C;  --fuse-tint:#3C1023;
+    --froz:#8A95A3;  --froz-tint:#252C36;
+    --xtxt:#A797D0; --xtxt-tint:#241E33;
+    --loss:#6FA8E0;  --loss-tint:#122334;
+    --good:#6CCB92; --warn:#E5A24A; --bad:#F2877F;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11151B; --surface:#171C24; --panel:#1B212A;
+  --ink:#EDF1F5; --body:#C2CAD4; --muted:#95A0AD; --faint:#6E7A88;
+  --rule:#2B333E; --rule-soft:#232A34;
+  --audio:#3FC2C6; --audio-tint:#0E3436;
+  --geom:#E0A548;  --geom-tint:#3A2A0E;
+  --fuse:#F1729C;  --fuse-tint:#3C1023;
+  --froz:#8A95A3;  --froz-tint:#252C36;
+  --xtxt:#A797D0; --xtxt-tint:#241E33;
+  --loss:#6FA8E0;  --loss-tint:#122334;
+  --good:#6CCB92; --warn:#E5A24A; --bad:#F2877F;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--body);font-family:var(--sans);font-size:15px;line-height:1.65;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-block:36px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--cond);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--fuse);font-weight:700;margin:0 0 6px}
+h1{font-family:var(--cond);font-weight:700;font-size:clamp(30px,5.4vw,50px);line-height:1.04;color:var(--ink);margin:0 0 12px;text-wrap:balance}
+.dek{max-width:68ch;color:var(--muted);margin:0 0 4px;font-size:16px}
+header.mast{border-bottom:2px solid var(--ink);padding-bottom:20px}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px 6px;margin:18px 0 0;padding:0}
+nav.toc a{font-family:var(--cond);font-weight:600;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--rule);border-radius:999px;padding:4px 11px;background:var(--surface)}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--fuse);border-color:var(--fuse);outline:none}
+h2.sec{font-family:var(--cond);font-weight:700;font-size:26px;color:var(--ink);margin:64px 0 4px;padding-bottom:8px;border-bottom:1px solid var(--rule);text-wrap:balance;scroll-margin-top:16px}
+h2.sec small{font-size:12px;letter-spacing:.14em;color:var(--fuse);display:block;text-transform:uppercase;margin-bottom:2px}
+h3{font-family:var(--cond);font-weight:700;font-size:18px;color:var(--ink);margin:34px 0 4px;text-wrap:balance}
+p{max-width:74ch;margin:10px 0;text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+li{text-align:justify;hyphens:auto}
+.tile p,.callout,figcaption,.dek{text-align:justify;hyphens:auto}
+.tl p{text-align:justify}
+p.lead{font-size:16.5px;color:var(--ink)}
+code,.m{font-family:var(--mono);font-size:12.5px;color:var(--body);background:var(--rule-soft);padding:1px 5px;border-radius:3px}
+b,strong{color:var(--ink)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin:18px 0}
+.tile{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;min-width:0}
+.tile .k{font-family:var(--mono);font-size:19px;color:var(--fuse);font-weight:500;font-variant-numeric:tabular-nums}
+.tile .v{font-size:13px;color:var(--muted);margin-top:2px}
+.tile h4{margin:0 0 4px;font-family:var(--cond);font-size:15px;color:var(--ink)}
+.tile p{font-size:13.5px;margin:4px 0;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:18px 0 6px;padding:12px 16px;background:var(--surface);border:1px solid var(--rule);border-radius:8px}
+.lg{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+.sw{width:22px;height:13px;border-radius:3px;border:1.5px solid;flex:none}
+.sw.a{background:var(--audio-tint);border-color:var(--audio)}
+.sw.g{background:var(--geom-tint);border-color:var(--geom)}
+.sw.f{background:var(--fuse-tint);border-color:var(--fuse)}
+.sw.z{background:var(--froz-tint);border-color:var(--froz)}
+.sw.t{background:var(--xtxt-tint);border-color:var(--xtxt);border-style:dashed}
+.sw.l{background:var(--loss-tint);border-color:var(--loss)}
+figure{margin:26px 0 0;background:var(--surface);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.canvas{padding:20px 16px 8px;overflow-x:auto;background:var(--panel)}
+figure svg{display:block;width:100%;min-width:700px;height:auto;color:var(--muted)}
+figcaption{padding:13px 18px 15px;border-top:1px solid var(--rule-soft);font-size:13.5px;color:var(--muted);line-height:1.55}
+figcaption b{font-family:var(--cond);color:var(--ink)}
+svg .lbl2{font-family:var(--sans);font-size:12px;font-weight:600;fill:var(--ink);text-anchor:middle}
+svg .sub{font-family:var(--mono);font-size:10.5px;fill:var(--muted);text-anchor:middle}
+svg .subl{font-family:var(--mono);font-size:10.5px;fill:var(--muted);text-anchor:start}
+svg .note{font-family:var(--sans);font-size:11.5px;fill:var(--muted);text-anchor:middle}
+svg .notel{font-family:var(--sans);font-size:11.5px;fill:var(--muted);text-anchor:start}
+svg .arrll{font-family:var(--sans);font-size:11px;font-weight:500;fill:var(--muted);text-anchor:start}
+svg .arrl{font-family:var(--sans);font-size:11px;font-weight:500;fill:var(--muted);text-anchor:middle}
+svg .grp{font-family:var(--cond);font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-anchor:start}
+svg .big{font-family:var(--cond);font-size:16px;font-weight:700;fill:var(--ink);text-anchor:middle}
+svg .tag{font-family:var(--cond);font-size:10px;font-weight:700;letter-spacing:.08em;text-anchor:middle;text-transform:uppercase}
+svg .b{stroke-width:1.5;rx:6}
+svg .b-a{fill:var(--audio-tint);stroke:var(--audio)}
+svg .b-g{fill:var(--geom-tint);stroke:var(--geom)}
+svg .b-f{fill:var(--fuse-tint);stroke:var(--fuse);stroke-width:2}
+svg .b-z{fill:var(--froz-tint);stroke:var(--froz)}
+svg .b-t{fill:var(--xtxt-tint);stroke:var(--xtxt);stroke-dasharray:5 3}
+svg .b-l{fill:var(--loss-tint);stroke:var(--loss)}
+svg .b-n{fill:var(--surface);stroke:var(--rule)}
+svg .grpbox{fill:none;stroke:var(--rule);stroke-width:1.25;stroke-dasharray:4 4;rx:10}
+svg .ln{stroke:var(--muted);stroke-width:1.5;fill:none}
+svg .ln-a{stroke:var(--audio);stroke-width:1.75;fill:none}
+svg .ln-g{stroke:var(--geom);stroke-width:1.75;fill:none}
+svg .ln-f{stroke:var(--fuse);stroke-width:2;fill:none}
+svg .ln-l{stroke:var(--loss);stroke-width:1.5;fill:none;stroke-dasharray:3 3}
+svg .rule{stroke:var(--rule);stroke-width:1}
+.eq{font-family:var(--mono);font-size:13px;background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--fuse);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0;overflow-x:auto;white-space:pre;color:var(--ink);max-width:100%}
+.callout{margin:22px 0 0;padding:13px 16px;border-left:3px solid var(--fuse);background:var(--surface);border-radius:0 8px 8px 0;font-size:14px;color:var(--body);max-width:80ch}
+.callout.warn{border-left-color:var(--warn)}
+.tbl{overflow-x:auto;margin:16px 0;border:1px solid var(--rule);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+th{font-family:var(--cond);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel)}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+.pill{display:inline-block;font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.07em;text-transform:uppercase;padding:1px 8px;border-radius:999px;border:1px solid}
+.pill.ok{color:var(--good);border-color:var(--good)}
+.pill.open{color:var(--warn);border-color:var(--warn)}
+.pill.risk{color:var(--bad);border-color:var(--bad)}
+.pill.new{color:var(--fuse);border-color:var(--fuse)}
+.tl{list-style:none;margin:18px 0;padding:0;border-left:2px solid var(--rule)}
+.tl li{position:relative;padding:0 0 18px 20px}
+.tl li::before{content:"";position:absolute;left:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--fuse);border:2px solid var(--paper)}
+.tl .d{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.tl .t{font-family:var(--cond);font-size:16px;font-weight:700;color:var(--ink)}
+.tl .c{font-family:var(--mono);font-size:11.5px;color:var(--fuse)}
+.tl p{margin:3px 0;font-size:14px;color:var(--muted)}
+.tree{font-family:var(--mono);font-size:12.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;overflow-x:auto;white-space:pre;color:var(--body)}
+.tree b{color:var(--fuse);font-weight:500}
+.two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin:14px 0}
+.two>*{min-width:0}
+ul.plain{padding-left:20px;max-width:74ch}
+ul.plain li{margin:5px 0}
+footer{margin-top:60px;padding-top:16px;border-top:1px solid var(--rule);font-size:13px;color:var(--faint);max-width:80ch}
+footer a{color:var(--audio)}
+a:focus-visible{outline:2px solid var(--fuse);outline-offset:2px}
+</style>
+
+
+<div class="wrap">
+<header class="mast">
+  <p class="eyebrow">Extension of SPOT · branch claude/sparc-latent-anchor · not yet executed</p>
+  <h1>SPARC Method Guide</h1>
+  <p class="dek">SPARC stands for Speech-Prosodic Anchor–Referent Coupling. It adds two things to SPOT, an audio-only 3D visual grounder: a clock that follows the speaker’s pauses, and a score that judges pairs of objects, a target and the anchor it is described against. Both are switched off by default, so the default model is still SPOT.</p>
+  <nav class="toc" aria-label="Sections">
+    <a href="#why">Why</a><a href="#overview">Overview</a><a href="#clock">Prosodic clock</a><a href="#roles">Three roles</a><a href="#pairs">Pair grounding</a><a href="#null">Null anchor</a><a href="#merge">Into the score</a><a href="#arms">Ablations</a><a href="#risks">Risks</a>
+  </nav>
+</header>
+
+<div class="legend">
+  <span class="lg"><span class="sw g"></span>geometry / detector</span>
+  <span class="lg"><span class="sw a"></span>acoustic branch</span>
+  <span class="lg"><span class="sw z"></span>SPOT, unchanged</span>
+  <span class="lg"><span class="sw f"></span>new in SPARC</span>
+  <span class="lg"><span class="sw l"></span>loss / score</span>
+</div>
+
+<h2 class="sec" id="why"><small>The gap</small>What SPOT leaves on the table</h2>
+<div class="grid">
+  <div class="tile"><h4>1 · The relation never meets its object</h4><p>SPOT turns the spoken relation into a bias on how proposals attend to each other, then scores every proposal alone. “The chair next to the table” is a statement about a <b>pair</b>. Among nine chairs, only the pair tells them apart.</p></div>
+  <div class="tile"><h4>2 · Time is linear</h4><p>A slot’s time prior is a Gaussian over position in the clip. A phrase is not a fixed fraction of a clip, and prosody is used only to tweak features, never to set structure.</p></div>
+  <div class="tile"><h4>3 · No anchor role</h4><p>Only a referent and a relation are elected. The thing the relation points at has no representation of its own.</p></div>
+</div>
+
+<h2 class="sec" id="overview"><small>Big picture</small>Where the two additions sit</h2>
+<figure>
+<div class="canvas">
+<svg viewBox="0 0 1100 560" role="img" aria-label="SPARC overview: audio and prosody feed a frame encoder; a prosodic clock warps the time prior of Sinkhorn slot induction, whose six slots are ordered; a role election now picks referent, relation and anchor; SPOT layers produce fused proposals; the latent-anchor grounder scores target–anchor pairs and adds its result to the SPOT score through a gain that starts at zero.">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--audio)"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--geom)"/></marker>
+    <marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--fuse)"/></marker>
+    <marker id="z" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--froz)"/></marker>
+  </defs>
+  <rect class="b b-a" x="20" y="30" width="170" height="52"/><text class="lbl2" x="105" y="52">Frozen frames</text><text class="sub" x="105" y="68">(128, 768)</text>
+  <rect class="b b-a" x="20" y="100" width="170" height="52"/><text class="lbl2" x="105" y="122">Prosody · 6 channels</text><text class="sub" x="105" y="138">ch. 5 = boundary strength</text>
+  <rect class="b b-z" x="240" y="30" width="170" height="52"/><text class="lbl2" x="325" y="52">Frame encoder</text><text class="sub" x="325" y="68">FiLM · time enc · attn</text>
+  <rect class="b b-f" x="240" y="100" width="170" height="52"/><text class="lbl2" x="325" y="122">Prosodic clock</text><text class="sub" x="325" y="138">warps time at pauses</text>
+  <rect class="b b-f" x="460" y="30" width="200" height="122"/><text class="lbl2" x="560" y="56">Sinkhorn slot induction</text><text class="sub" x="560" y="76">6 slots · budget · ε=0.3</text><text class="sub" x="560" y="92">time prior on the clock</text><text class="tag" x="560" y="112" fill="var(--fuse)">ordered slot centres</text><text class="sub" x="560" y="136">slots (6,128) · mass (6)</text>
+  <rect class="b b-f" x="710" y="30" width="190" height="122"/><text class="lbl2" x="805" y="56">Role election</text><text class="sub" x="805" y="76">3 learned queries</text><text class="sub" x="805" y="96" style="fill:var(--fuse)">referent · relation · ANCHOR</text><text class="sub" x="805" y="116">presence = K·Σ a·mass</text>
+  <path class="ln-a" d="M190 56 H240" marker-end="url(#a)"/><path class="ln-a" d="M190 126 H240" marker-end="url(#a)"/>
+  <path class="ln-a" d="M410 56 H435 V70 H460" marker-end="url(#a)"/><path class="ln-f" d="M410 126 H435 V110 H460" marker-end="url(#f)"/>
+  <path class="ln-f" d="M660 90 H710" marker-end="url(#f)"/>
+  <!-- geometry column -->
+  <rect class="b b-g" x="20" y="230" width="170" height="52"/><text class="lbl2" x="105" y="252">Detector (unchanged)</text><text class="sub" x="105" y="268">256 proposals</text>
+  <rect class="b b-z" x="240" y="230" width="250" height="110"/><text class="big" x="365" y="258">SPOT × 3</text><text class="sub" x="365" y="280">proposals ↔ slots · OT routing</text><text class="sub" x="365" y="296">RSK geometric attention</text><text class="sub" x="365" y="312">graph · gate · frame residual</text><text class="tag" x="365" y="330" fill="var(--froz)">unchanged</text>
+  <path class="ln-g" d="M190 256 H240" marker-end="url(#g)"/>
+  <path class="ln-f" d="M560 152 V190 H365 V230" marker-end="url(#f)"/><text class="arrll" x="372" y="186" fill="var(--fuse)">slots + mass</text>
+  <rect class="b b-z" x="540" y="230" width="190" height="52"/><text class="lbl2" x="635" y="252">SPOT score</text><text class="sub" x="635" y="268">MLP + w · log π̂</text>
+  <path class="ln" d="M490 256 H540" marker-end="url(#z)"/>
+  <!-- new grounder -->
+  <rect class="grpbox" x="540" y="320" width="540" height="206" stroke="var(--fuse)"/><text class="grp" x="556" y="312" fill="var(--fuse)">Latent-anchor grounder</text>
+  <rect class="b b-f" x="560" y="342" width="230" height="64"/><text class="lbl2" x="675" y="364">Pair table (target i, anchor j)</text><text class="sub" x="675" y="382">s_ij = u_i + v_j + g_ij</text><text class="sub" x="675" y="396">256 × 256 + null column</text>
+  <rect class="b b-f" x="820" y="342" width="240" height="64"/><text class="lbl2" x="940" y="364">Exact marginal over anchor</text><text class="sub" x="940" y="382">score_i = u_i + logsumexp_j(…)</text><text class="sub" x="940" y="396">log-softmax over targets</text>
+  <rect class="b b-l" x="560" y="430" width="500" height="82"/><text class="lbl2" x="810" y="454">confidence = SPOT score + gain · pair logit</text><text class="sub" x="810" y="474">gain starts at 0, so step one is exactly SPOT</text><text class="sub" x="810" y="490">answer = argmax over proposals</text>
+  <path class="ln-f" d="M790 374 H820" marker-end="url(#f)"/><path class="ln-f" d="M940 406 V430" marker-end="url(#f)"/>
+  <path class="ln-f" d="M805 152 V300 H675 V342" marker-end="url(#f)"/><text class="arrll" x="812" y="296" fill="var(--fuse)">referent · anchor · relation</text>
+  <path class="ln-g" d="M105 282 V540 H530 V398 H560" marker-end="url(#g)"/><text class="arrll" x="120" y="534" fill="var(--geom)">proposal features and centres</text>
+  <path class="ln" d="M635 282 V470 H560" marker-end="url(#z)"/>
+  <text class="notel" x="20" y="400" fill="var(--ink)">Crimson boxes are the whole diff.</text>
+  <text class="notel" x="20" y="418">Everything teal-grey is SPOT as it was.</text>
+</svg>
+</div>
+<figcaption><b>Figure 1. SPARC on top of SPOT.</b> One change sits in the acoustic branch (the clock and ordered slots, plus a third elected role) and one sits at the end (the pair grounder). Both are optional flags, <code>--prosodic_clock</code> and <code>--latent_anchor</code>.</figcaption>
+</figure>
+
+<h2 class="sec" id="clock"><small>Addition 1</small>The prosodic clock</h2>
+<p>The speaker’s pauses and phrase breaks tell you where one piece of the description ends and the next begins. Prosody channel 5, boundary strength, is large at those places. The clock turns it into a time axis that runs <i>faster</i> across a boundary, so that a slot’s Gaussian covers a phrase and not a stretch of seconds.</p>
+<div class="eq">z_t   = ( b_t − mean(b) ) / std(b)                    b = boundary strength, per utterance
+w_t   = 0.25 + sigmoid( g · z_t + c )                  learned gain g and bias c, zero on padding
+clock = ( Σ_(s&lt;t) w_s ) / ( Σ_s w_s )                 exclusive running sum, lands in [0, 1)
+pos_t = (1 − m) · t / T_real  +  m · clock_t           m = sigmoid(clock_mix), starts at 0.018</div>
+<figure>
+<div class="canvas">
+<svg viewBox="0 0 1100 470" role="img" aria-label="Top: boundary strength per frame, with two tall spikes at pauses. Middle: the linear clock is a straight diagonal, the prosodic clock rises steeply at the two pauses. Bottom: six slot centres placed evenly in linear time sit apart from the same six centres placed on the prosodic clock, where they group around phrases.">
+  <text class="grp" x="70" y="22" fill="var(--audio)">① boundary strength b_t, one bar per frame</text>
+  <line class="rule" x1="70" y1="150" x2="1040" y2="150"/>
+  <rect x="76.3" y="149.2" width="22" height="0.8" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="111.0" y="145.7" width="22" height="4.3" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="145.6" y="147.7" width="22" height="2.3" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="180.2" y="145.0" width="22" height="5.0" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="214.9" y="144.8" width="22" height="5.2" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="249.5" y="149.2" width="22" height="0.8" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="284.2" y="149.2" width="22" height="0.8" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="318.8" y="142.4" width="22" height="7.6" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="353.5" y="148.9" width="22" height="1.1" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="388.1" y="54.2" width="22" height="95.8" fill="var(--audio)" opacity="0.9" rx="2"/><rect x="422.8" y="75.9" width="22" height="74.1" fill="var(--audio)" opacity="0.9" rx="2"/><rect x="457.4" y="146.5" width="22" height="3.5" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="492.0" y="142.4" width="22" height="7.6" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="526.7" y="146.5" width="22" height="3.5" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="561.3" y="144.6" width="22" height="5.4" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="596.0" y="149.2" width="22" height="0.8" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="630.6" y="144.7" width="22" height="5.3" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="665.2" y="142.0" width="22" height="8.0" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="699.9" y="145.9" width="22" height="4.1" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="734.5" y="63.6" width="22" height="86.4" fill="var(--audio)" opacity="0.9" rx="2"/><rect x="769.2" y="94.8" width="22" height="55.2" fill="var(--audio)" opacity="0.9" rx="2"/><rect x="803.8" y="149.2" width="22" height="0.8" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="838.5" y="143.3" width="22" height="6.7" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="873.1" y="145.2" width="22" height="4.8" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="907.8" y="148.5" width="22" height="1.5" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="942.4" y="149.2" width="22" height="0.8" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="977.0" y="142.0" width="22" height="8.0" fill="var(--audio)" opacity="0.45" rx="2"/><rect x="1011.7" y="146.5" width="22" height="3.5" fill="var(--audio)" opacity="0.45" rx="2"/>
+  <text class="note" x="416" y="62" style="fill:var(--audio)">pause</text>
+  <text class="note" x="763" y="76" style="fill:var(--audio)">phrase break</text>
+  <text class="grp" x="70" y="190" fill="var(--fuse)">② the clock</text>
+  <line class="rule" x1="70" y1="330" x2="1040" y2="330"/><line class="rule" x1="70" y1="200" x2="70" y2="330"/>
+  <polyline points="87.3,330.0 122.0,325.4 156.6,320.7 191.2,316.1 225.9,311.4 260.5,306.8 295.2,302.1 329.8,297.5 364.5,292.9 399.1,288.2 433.8,283.6 468.4,278.9 503.0,274.3 537.7,269.6 572.3,265.0 607.0,260.4 641.6,255.7 676.2,251.1 710.9,246.4 745.5,241.8 780.2,237.1 814.8,232.5 849.5,227.9 884.1,223.2 918.8,218.6 953.4,213.9 988.0,209.3 1022.7,204.6" fill="none" stroke="var(--froz)" stroke-width="2" stroke-dasharray="5 4"/>
+  <polyline points="87.3,330.0 122.0,326.0 156.6,321.7 191.2,317.6 225.9,313.3 260.5,309.1 295.2,305.1 329.8,301.3 364.5,296.8 399.1,292.8 433.8,285.1 468.4,277.7 503.0,273.5 537.7,269.1 572.3,264.9 607.0,260.6 641.6,256.6 676.2,252.3 710.9,247.9 745.5,243.6 780.2,236.0 814.8,229.2 849.5,225.2 884.1,220.9 918.8,216.6 953.4,212.5 988.0,208.6 1022.7,204.2" fill="none" stroke="var(--fuse)" stroke-width="3"/>
+  <text class="notel" x="82" y="214" style="fill:var(--froz)">- - linear time (SPOT)</text>
+  <text class="notel" x="82" y="232" style="fill:var(--fuse)">—— prosodic clock (SPARC)</text>
+  <text class="sub" x="64" y="334" style="text-anchor:end">0</text><text class="sub" x="64" y="204" style="text-anchor:end">1</text>
+  <text class="grp" x="70" y="364" fill="var(--ink)">③ where the six slot centres land on the frames</text>
+  <line class="rule" x1="70" y1="388" x2="1040" y2="388"/><line class="rule" x1="70" y1="424" x2="1040" y2="424"/>
+  <circle cx="215.5" cy="388" r="7" fill="none" stroke="var(--fuse)" stroke-width="2"/><circle cx="351.3" cy="388" r="7" fill="none" stroke="var(--audio)" stroke-width="2"/><circle cx="487.1" cy="388" r="7" fill="none" stroke="var(--geom)" stroke-width="2"/><circle cx="622.9" cy="388" r="7" fill="none" stroke="var(--loss)" stroke-width="2"/><circle cx="758.7" cy="388" r="7" fill="none" stroke="var(--xtxt)" stroke-width="2"/><circle cx="894.5" cy="388" r="7" fill="none" stroke="var(--froz)" stroke-width="2"/><circle cx="248.9" cy="424" r="7" fill="var(--fuse)"/><circle cx="401.3" cy="424" r="7" fill="var(--audio)"/><circle cx="497.9" cy="424" r="7" fill="var(--geom)"/><circle cx="647.2" cy="424" r="7" fill="var(--loss)"/><circle cx="772.6" cy="424" r="7" fill="var(--xtxt)"/><circle cx="895.2" cy="424" r="7" fill="var(--froz)"/>
+  <text class="notel" x="70" y="378" style="fill:var(--muted)">linear: evenly spread (hollow)</text>
+  <text class="notel" x="70" y="450" style="fill:var(--ink)">prosodic: centres follow the phrases (filled) — the pauses fall between slots instead of inside them</text>
+</svg>
+</div>
+<figcaption><b>Figure 2. How the clock warps time.</b> The boundary profile is an illustrative example made up for this figure. With every frame weighted equally the clock is exactly the straight line, which is why the mix starts near zero and the model begins as SPOT.</figcaption>
+</figure>
+<h3>Ordered slots</h3>
+<p>With the clock on, the slot centres are an increasing sequence: μ<sub>k</sub> = Σ<sub>i≤k</sub> softplus(gap<sub>i</sub>). They are initialised at the same evenly spaced 0.15 … 0.85 as before, but can no longer swap places, so the six slots are consecutive segments of the utterance. Slot 1 can drift toward “the brown chair”, slot 5 toward “the table”.</p>
+
+<h2 class="sec" id="roles"><small>Addition 2a</small>Three elected roles</h2>
+<figure>
+<div class="canvas">
+<svg viewBox="0 0 1100 300" role="img" aria-label="Six ordered slots feed three role queries: referent, relation and anchor. Each produces a vector with a different consumer. Pairwise role separation keeps them on different slots.">
+  <defs><marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--fuse)"/></marker></defs>
+  <text class="grp" x="30" y="22" fill="var(--fuse)">six ordered slots</text>
+  <rect class="b b-f" x="30" y="34" width="100" height="32"/><text class="lbl2" x="80" y="55">slot 1</text><rect class="b b-f" x="30" y="74" width="100" height="32"/><text class="lbl2" x="80" y="95">slot 2</text><rect class="b b-f" x="30" y="114" width="100" height="32"/><text class="lbl2" x="80" y="135">slot 3</text><rect class="b b-f" x="30" y="154" width="100" height="32"/><text class="lbl2" x="80" y="175">slot 4</text><rect class="b b-f" x="30" y="194" width="100" height="32"/><text class="lbl2" x="80" y="215">slot 5</text><rect class="b b-f" x="30" y="234" width="100" height="32"/><text class="lbl2" x="80" y="255">slot 6</text>
+  <rect class="b b-f" x="320" y="40" width="190" height="56"/><text class="lbl2" x="415" y="62">referent query</text><text class="sub" x="415" y="80">“the brown chair”</text>
+  <rect class="b b-f" x="320" y="122" width="190" height="56"/><text class="lbl2" x="415" y="144">relation query</text><text class="sub" x="415" y="162">“next to”</text>
+  <rect class="b b-f" x="320" y="204" width="190" height="56"/><text class="lbl2" x="415" y="226">anchor query · new</text><text class="sub" x="415" y="244">“the table”</text>
+  <path class="ln-f" d="M130 50 H320" marker-end="url(#r)"/><path class="ln-f" d="M130 130 H225 V150 H320" marker-end="url(#r)"/><path class="ln-f" d="M130 210 H225 V232 H320" marker-end="url(#r)"/>
+  <path class="ln-f" d="M130 90 H225 V68 H320" marker-end="url(#r)"/><path class="ln-f" d="M130 170 H225 V152 H320" marker-end="url(#r)"/><path class="ln-f" d="M130 250 H225 V240 H320" marker-end="url(#r)"/>
+  <text class="arrl" x="225" y="290">soft pooling over slots</text>
+  <rect class="b b-n" x="600" y="40" width="200" height="56"/><text class="lbl2" x="700" y="62">target fit u_i</text><text class="sub" x="700" y="80">+ class loss + InfoNCE</text>
+  <rect class="b b-n" x="600" y="122" width="200" height="56"/><text class="lbl2" x="700" y="144">pair potential g_ij</text><text class="sub" x="700" y="162">+ RSK kernel</text>
+  <rect class="b b-n" x="600" y="204" width="200" height="56"/><text class="lbl2" x="700" y="226">anchor fit v_j</text><text class="sub" x="700" y="244">+ presence (null anchor)</text>
+  <path class="ln-f" d="M510 68 H600" marker-end="url(#r)"/><path class="ln-f" d="M510 150 H600" marker-end="url(#r)"/><path class="ln-f" d="M510 232 H600" marker-end="url(#r)"/>
+  <rect class="grpbox" x="840" y="40" width="240" height="220" stroke="var(--fuse)"/>
+  <text class="notel" x="856" y="68" fill="var(--ink)">Role separation, all pairs:</text>
+  <text class="subl" x="856" y="92">⟨a_ref,a_rel⟩ + ⟨a_ref,a_anc⟩</text><text class="subl" x="856" y="108">+ ⟨a_rel,a_anc⟩  → 0</text>
+  <text class="notel" x="856" y="140">With two roles this is the</text><text class="notel" x="856" y="156">old term exactly.</text>
+  <text class="notel" x="856" y="188" fill="var(--fuse)">Nothing labels the slots.</text><text class="notel" x="856" y="204" fill="var(--fuse)">Three roles on six slots</text><text class="notel" x="856" y="220" fill="var(--fuse)">collapse more easily, so</text><text class="notel" x="856" y="236" fill="var(--fuse)">check slot-roles.</text>
+</svg>
+</div>
+<figcaption><b>Figure 3. Role election with an anchor.</b> The example phrases are only there to say what each role is for; the model never sees them. The anchor slot’s share of the utterance becomes the “presence” signal used by the null anchor.</figcaption>
+</figure>
+
+<h2 class="sec" id="pairs"><small>Addition 2b</small>Pair grounding with a latent anchor</h2>
+<p>ScanRefer has no anchor labels and this model reads no text. So the anchor is a hidden variable. With 256 proposals the full 256 × 256 table of (target i, anchor j) pairs is small enough to sum over exactly, which removes any need for sampling or a hard guess.</p>
+<div class="eq">u_i   = s · cos( W_r·referent , W_r′·V_i )                      how well proposal i matches the referent phrase
+v_j   = s · cos( W_a·anchor   , W_a′·V_j )                      how well proposal j matches the anchor phrase
+g_ij  = 5·tanh( Σ_k w_k(relation) · φ_k(geom_ij) / 5 )          relation-conditioned pair potential
+s_ij  = u_i + v_j + g_ij
+score_i = u_i + logsumexp( { v_j + g_ij : j ≠ i, j real } ∪ { null } )</div>
+<figure>
+<div class="canvas">
+<svg viewBox="0 0 1100 440" role="img" aria-label="A grid of pair scores: rows are candidate targets, columns are candidate anchors plus a null column. The diagonal is blocked. One row is highlighted as the winning target and one cell in it as its most likely anchor. Summing along a row gives that target's score.">
+  <text class="grp" x="60" y="24" fill="var(--fuse)">pair table, one utterance (10 of 256 proposals shown)</text>
+  <text class="sub" x="74" y="50">j=0</text><text class="sub" x="312" y="50">j=7</text><text class="sub" x="380" y="50">j=9</text><text class="sub" x="50" y="77" style="text-anchor:end">i=0</text><text class="sub" x="50" y="179" style="text-anchor:end">i=3</text><text class="sub" x="50" y="383" style="text-anchor:end">i=9</text>
+  <rect x="60" y="58" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="94" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.14"/><rect x="128" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.11"/><rect x="162" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.20"/><rect x="196" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="230" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.18"/><rect x="264" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.15"/><rect x="298" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.50"/><rect x="332" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="366" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.17"/><rect x="410" y="58" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="60" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.16"/><rect x="94" y="92" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="128" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="162" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.10"/><rect x="196" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.16"/><rect x="230" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.23"/><rect x="264" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.10"/><rect x="298" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.50"/><rect x="332" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.12"/><rect x="366" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.19"/><rect x="410" y="92" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.25"/><rect x="60" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.18"/><rect x="94" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.15"/><rect x="128" y="126" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="162" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.26"/><rect x="196" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="230" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.23"/><rect x="264" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.13"/><rect x="298" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.50"/><rect x="332" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.11"/><rect x="366" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.10"/><rect x="410" y="126" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.14"/><rect x="60" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.23"/><rect x="94" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.11"/><rect x="128" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.18"/><rect x="162" y="160" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="196" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.20"/><rect x="230" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.15"/><rect x="264" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.18"/><rect x="298" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.88" stroke="var(--fuse)" stroke-width="2"/><rect x="332" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="366" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="410" y="160" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.17"/><rect x="60" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.12"/><rect x="94" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.20"/><rect x="128" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.16"/><rect x="162" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.14"/><rect x="196" y="194" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="230" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.19"/><rect x="264" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.16"/><rect x="298" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.50"/><rect x="332" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.13"/><rect x="366" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.22"/><rect x="410" y="194" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.21"/><rect x="60" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.12"/><rect x="94" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.18"/><rect x="128" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.17"/><rect x="162" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.24"/><rect x="196" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.21"/><rect x="230" y="228" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="264" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.13"/><rect x="298" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.50"/><rect x="332" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.26"/><rect x="366" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.10"/><rect x="410" y="228" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.16"/><rect x="60" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.22"/><rect x="94" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.11"/><rect x="128" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.17"/><rect x="162" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="196" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.20"/><rect x="230" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.22"/><rect x="264" y="262" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="298" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.50"/><rect x="332" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.18"/><rect x="366" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.24"/><rect x="410" y="262" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.14"/><rect x="60" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.21"/><rect x="94" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.19"/><rect x="128" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.18"/><rect x="162" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.16"/><rect x="196" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.23"/><rect x="230" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.25"/><rect x="264" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.17"/><rect x="298" y="296" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="332" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.20"/><rect x="366" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="410" y="296" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.21"/><rect x="60" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.20"/><rect x="94" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.26"/><rect x="128" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.23"/><rect x="162" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.13"/><rect x="196" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.15"/><rect x="230" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.20"/><rect x="264" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.08"/><rect x="298" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.50"/><rect x="332" y="330" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="366" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.16"/><rect x="410" y="330" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.11"/><rect x="60" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.10"/><rect x="94" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="128" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.22"/><rect x="162" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.10"/><rect x="196" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.12"/><rect x="230" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.15"/><rect x="264" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.24"/><rect x="298" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.50"/><rect x="332" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.09"/><rect x="366" y="364" width="31" height="31" rx="3" fill="var(--rule-soft)" opacity="1.00"/><rect x="410" y="364" width="31" height="31" rx="3" fill="var(--fuse)" opacity="0.16"/><rect x="56" y="157" width="388" height="37" fill="none" stroke="var(--audio)" stroke-width="2" rx="4"/>
+  <text class="sub" x="424" y="50">null</text>
+  <text class="notel" x="60" y="420">darker = higher pair score s_ij · grey diagonal = an object cannot be its own anchor</text>
+  <path class="ln-a" d="M456 174 H 520" marker-end="url(#a)"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--audio)"/></marker></defs>
+  <rect class="b b-a" x="520" y="146" width="250" height="64"/><text class="lbl2" x="645" y="168">sum a row (logsumexp)</text><text class="sub" x="645" y="186">→ score for target i = 3</text>
+  <rect class="grpbox" x="800" y="58" width="280" height="330" stroke="var(--fuse)"/>
+  <text class="grp" x="816" y="82" fill="var(--fuse)">what the table says</text>
+  <text class="notel" x="816" y="108" fill="var(--ink)">Row 3 wins: its best anchor</text><text class="notel" x="816" y="124" fill="var(--ink)">(column 7) fits the anchor</text><text class="notel" x="816" y="140" fill="var(--ink)">phrase, and the pair sits in</text><text class="notel" x="816" y="156" fill="var(--ink)">the spoken relation.</text>
+  <text class="notel" x="816" y="188">Column 7 is also a good</text><text class="notel" x="816" y="204">anchor for other rows, but</text><text class="notel" x="816" y="220">their pair potential is low.</text>
+  <text class="notel" x="816" y="252">A chair near the wrong table,</text><text class="notel" x="816" y="268">or no table, scores low, which</text><text class="notel" x="816" y="284">is how the pair separates</text><text class="notel" x="816" y="300">same-class distractors.</text>
+  <text class="notel" x="816" y="334" fill="var(--fuse)">The values are drawn to show</text><text class="notel" x="816" y="350" fill="var(--fuse)">the idea, not from a model run.</text>
+</svg>
+</div>
+<figcaption><b>Figure 4. The pair table.</b> After the row sums, the scores are normalised across targets with a log-softmax. The model also keeps its own posterior over which proposal was the anchor, written to the batch for diagnostics.</figcaption>
+</figure>
+
+<h3>The relation decides how a pair is judged</h3>
+<figure>
+<div class="canvas">
+<svg viewBox="0 0 1100 280" role="img" aria-label="The geometry of an ordered pair feeds a shared MLP that outputs eight basis potentials; the spoken relation vector produces eight mixing weights; their weighted sum is the pair potential, softly clamped to plus or minus five.">
+  <defs><marker id="p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--fuse)"/></marker><marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--geom)"/></marker></defs>
+  <rect class="b b-g" x="20" y="40" width="210" height="76"/><text class="lbl2" x="125" y="64">Pair geometry</text><text class="sub" x="125" y="84">d · unit(3) · dz · d_xy · log d</text><text class="sub" x="125" y="100">computed once per scene</text>
+  <rect class="b b-f" x="280" y="40" width="200" height="76"/><text class="lbl2" x="380" y="64">Shared MLP</text><text class="sub" x="380" y="84">7 → 32 → 8</text><text class="sub" x="380" y="100">8 basis potentials φ_k</text>
+  <rect class="b b-f" x="280" y="170" width="200" height="76"/><text class="lbl2" x="380" y="194">Relation vector</text><text class="sub" x="380" y="214">Linear → 8 weights w_k</text><text class="sub" x="380" y="230">one set per utterance</text>
+  <rect class="b b-f" x="540" y="100" width="200" height="76"/><text class="lbl2" x="640" y="124">Σ_k w_k · φ_k</text><text class="sub" x="640" y="144">mix per pair (i, j)</text><text class="sub" x="640" y="160">(B′, 256, 256)</text>
+  <rect class="b b-l" x="790" y="100" width="200" height="76"/><text class="lbl2" x="890" y="124">5 · tanh( · / 5 )</text><text class="sub" x="890" y="144">soft clamp, g_ij</text><text class="sub" x="890" y="160">keeps early training stable</text>
+  <path class="ln-g" d="M230 78 H280" marker-end="url(#pg)"/><path class="ln-f" d="M480 78 H510 V120 H540" marker-end="url(#p)"/><path class="ln-f" d="M480 208 H510 V156 H540" marker-end="url(#p)"/><path class="ln-f" d="M740 138 H790" marker-end="url(#p)"/>
+  <text class="notel" x="20" y="190" fill="var(--ink)">The basis is shared; the relation only</text><text class="notel" x="20" y="208" fill="var(--ink)">chooses the mix. “Next to” can lean on</text><text class="notel" x="20" y="226" fill="var(--ink)">small d, “above” on the vertical offset.</text>
+</svg>
+</div>
+<figcaption><b>Figure 5. The pair potential.</b> This generalises RSK. RSK shaped how proposals attend to each other; here the same kind of spoken-relation signal scores the target–anchor pair directly. Directions use the scene’s own axes, so left and right are only as reliable as ScanNet’s axis alignment.</figcaption>
+</figure>
+
+<h2 class="sec" id="null"><small>Addition 2c</small>The null anchor</h2>
+<p>Not every description has an anchor: “the chair in the corner” names none. A null column is added to the table, with logit n = b₀ + b₁ · (1 − presence). Presence is K · Σ<sub>k</sub> a<sub>anchor,k</sub> · mass<sub>k</sub>. It is about 1 when the elected anchor slot won an average share of the utterance, and about 0 when it won nothing, so “no anchor was spoken” reaches the score through the slot mass SPOT already computes.</p>
+<figure>
+<div class="canvas">
+<svg viewBox="0 0 1100 240" role="img" aria-label="Two utterances: with an anchor spoken, the anchor slot wins a normal share of mass, presence is about one and the null logit is low; with no anchor, the anchor slot wins almost nothing, presence is near zero and the null logit is high.">
+  <rect class="b b-n" x="30" y="30" width="480" height="90"/><text class="lbl2" x="270" y="54">“the brown chair next to the table”</text>
+  <rect x="60" y="68" width="150" height="16" fill="var(--audio)" opacity=".6" rx="3"/><rect x="215" y="68" width="90" height="16" fill="var(--fuse)" opacity=".6" rx="3"/><rect x="310" y="68" width="170" height="16" fill="var(--geom)" opacity=".7" rx="3"/>
+  <text class="sub" x="135" y="102">referent</text><text class="sub" x="260" y="102">relation</text><text class="sub" x="395" y="102">anchor · normal share</text>
+  <rect class="b b-n" x="30" y="140" width="480" height="90"/><text class="lbl2" x="270" y="164">“the brown chair in the corner”</text>
+  <rect x="60" y="178" width="260" height="16" fill="var(--audio)" opacity=".6" rx="3"/><rect x="325" y="178" width="140" height="16" fill="var(--fuse)" opacity=".6" rx="3"/><rect x="470" y="178" width="8" height="16" fill="var(--geom)" opacity=".7" rx="3"/>
+  <text class="sub" x="190" y="212">referent</text><text class="sub" x="395" y="212">relation (to the corner)</text>
+  <path class="ln-f" d="M510 75 H570" marker-end="url(#n)"/><path class="ln-f" d="M510 185 H570" marker-end="url(#n)"/>
+  <defs><marker id="n" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--fuse)"/></marker></defs>
+  <rect class="b b-f" x="570" y="45" width="230" height="60"/><text class="lbl2" x="685" y="68">presence ≈ 1</text><text class="sub" x="685" y="88">null logit low → real anchors win</text>
+  <rect class="b b-f" x="570" y="155" width="230" height="60"/><text class="lbl2" x="685" y="178">presence ≈ 0</text><text class="sub" x="685" y="198">null logit high → no anchor needed</text>
+  <text class="notel" x="830" y="76" fill="var(--ink)">The bars are illustrative: the</text><text class="notel" x="830" y="94" fill="var(--ink)">phrases above are only examples.</text><text class="notel" x="830" y="124" fill="var(--muted)">The model never sees the words.</text>
+</svg>
+</div>
+<figcaption><b>Figure 6. Null anchor.</b> The ablation <code>sparc-nonull</code> forces every utterance to pick an anchor and tests whether this matters.</figcaption>
+</figure>
+
+<h2 class="sec" id="merge"><small>Putting it together</small>Joining the SPOT score</h2>
+<div class="eq">confidence_i = SPOT score_i  +  gain · log_softmax_i( u_i + logsumexp_j(…) )         gain starts at 0
+answer       = argmax_i confidence_i      (non-objects masked with −10⁴)</div>
+<p>Because the gain starts at zero, step one is exactly SPOT. A zero gain also blocks the gradient to every other parameter in the grounder, so the first thing training has to do is move the gain. If it stays near zero in the first epoch, start it at 0.1. The same “start as the old thing” rule is used elsewhere: the clock mix starts at sigmoid(−4), which is the same trick as RSK’s blend.</p>
+<div class="grid">
+  <div class="tile"><h4>No new loss</h4><p>The anchor is trained only through the existing grounding loss. The only change to the objective is that role separation now covers every pair of roles.</p></div>
+  <div class="tile"><h4>Audio only</h4><p>No transcript, no text teacher, no anchor labels. The training signal for the anchor is whether the pair helps find the right target.</p></div>
+  <div class="tile"><h4>Cost</h4><p>The pair table is 64 × 256 × 257 numbers per batch, about 17 MB for one copy in float32. A few copies are alive at once, which is small next to the detector.</p></div>
+</div>
+
+<h2 class="sec" id="arms"><small>Evidence</small>Ablation arms and predictions</h2>
+<p>Each arm differs from the full <code>sparc</code> by exactly one thing. Run seeds first, because a gain smaller than the seed spread is not a result, and report the Multiple subset separately.</p>
+<div class="tbl"><table>
+<tr><th>Arm</th><th>Differs from sparc by</th><th>Question it answers</th></tr>
+<tr><td><code>sparc</code></td><td>full model</td><td>Does SPARC beat SPOT?</td></tr>
+<tr><td><code>sparc-noclock</code></td><td>no prosodic clock, no ordered slots</td><td>Do pauses help set slot structure?</td></tr>
+<tr><td><code>sparc-noanchor</code></td><td>no pair grounder</td><td>Is the pair worth anything beyond the clock?</td></tr>
+<tr><td><code>sparc-unordered</code></td><td>free slot centres</td><td>Does ordering matter on its own?</td></tr>
+<tr><td><code>sparc-nonull</code></td><td>every utterance needs an anchor</td><td>Does “no anchor” matter?</td></tr>
+<tr><td><code>sparc-hardanchor</code></td><td>max instead of logsumexp</td><td>Is exact marginalisation what helps?</td></tr>
+<tr><td><code>sparc-nopairgeom</code></td><td>anchor by features only</td><td>Does the relation-conditioned geometry matter?</td></tr>
+</table></div>
+<h3>Predictions that can fail</h3>
+<ul class="plain">
+<li><b>Where the gain lands.</b> <code>sparc</code> should beat <code>spot</code> by more than the seed spread, mostly on the Multiple subset. A gain on Unique instead would mean the mechanism is not the claimed one.</li>
+<li><b>Null mass.</b> The null probability should be high for utterances with no relation. An analysis-only comparison against the existing parse of “neighbors” (never used in training) can test this.</li>
+<li><b>Hard anchor.</b> <code>sparc-hardanchor</code> should not beat <code>sparc</code>. If it does, exact marginalisation is not what helps.</li>
+</ul>
+
+<h2 class="sec" id="risks"><small>Honesty</small>Status, risks and where things are</h2>
+<div class="tbl"><table>
+<tr><th>Item</th><th>State</th><th>Detail</th></tr>
+<tr><td>Code on branch</td><td><span class="pill ok">pushed</span></td><td><code>claude/sparc-latent-anchor</code>; new file <code>models/fusion/latent_anchor.py</code>; patches in the audio module, match module, loss, config, arms and self-test; <code>model_stucture.py</code> kept in sync.</td></tr>
+<tr><td>Execution</td><td><span class="pill risk">not run</span></td><td>No PyTorch where it was written. The code compiles, and a plain-Python check of ordered centres, clock monotonicity and exact pair marginalisation passes. Run <code>selftest.py --all_arms</code> first.</td></tr>
+<tr><td>Novelty</td><td><span class="pill open">unchecked</span></td><td>Pairwise relations already exist in text grounders (ViL3DRel, 3DRP-Net). What is specific here is the pair built from roles elected out of an unsupervised audio decomposition, a latent anchor summed exactly, and the null anchor driven by slot mass. The literature search could not read papers directly, so this needs a primary-source check.</td></tr>
+<tr><td>Role collapse</td><td><span class="pill risk">risk</span></td><td>Three roles on six slots collapse more easily. Check the slot-roles analysis.</td></tr>
+<tr><td>Zero-gain start</td><td><span class="pill open">watch</span></td><td>Gradients to the rest of the grounder wait until the gain moves.</td></tr>
+<tr><td>Left and right</td><td><span class="pill open">limit</span></td><td>No speaker viewpoint; absolute axes only.</td></tr>
+</table></div>
+<footer>
+  Method note in the repo: <code>docs/SPARC.md</code> · literature gaps: <code>docs/research/literature-gaps.md</code>. All example values in the diagrams are illustrative; no model has been run.
+</footer>
+</div>
+
+</body>
+</html>
