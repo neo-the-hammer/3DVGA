@@ -245,8 +245,61 @@ class GTTSBackend(TTSBackend):
         return audio, rate
 
 
+class KokoroBackend(TTSBackend):
+    """Kokoro-82M: a small neural TTS (StyleTTS2-based) with natural prosody, far closer to
+    gTTS than the Piper voices, and fast on a GPU (a T4 does many clips per second).
+    Voice ids start with the accent: a* American, b* British; second letter f/m = sex."""
+
+    name = "kokoro"
+    native_rate = 24000
+
+    DEFAULT_VOICES = [
+        "af_heart", "am_michael", "bf_emma", "bm_george",    # training: US/UK x female/male
+        "af_bella", "bm_lewis",                              # held out: one US, one UK; one F, one M
+    ]
+
+    def __init__(self, voice_list=None, cuda=False, **_):
+        try:
+            from kokoro import KPipeline  # noqa: F401
+        except ImportError as exc:
+            raise SystemExit(
+                "backend 'kokoro' needs the kokoro package and espeak-ng:\n"
+                "    pip install kokoro soundfile ; apt-get install espeak-ng\n"
+                f"(import failed: {exc})") from exc
+        import torch
+        self._device = "cuda" if (cuda and torch.cuda.is_available()) else "cpu"
+        self._voice_list = voice_list or self.DEFAULT_VOICES
+        self._pipelines = {}
+        print(f"[kokoro] device={self._device}", flush=True)
+
+    def voices(self):
+        return list(self._voice_list)
+
+    def _pipeline(self, voice):
+        lang = voice[0]                       # 'a' American English, 'b' British English
+        if lang not in self._pipelines:
+            from kokoro import KPipeline
+            try:
+                self._pipelines[lang] = KPipeline(lang_code=lang, device=self._device)
+            except TypeError:                 # older kokoro without the device argument
+                self._pipelines[lang] = KPipeline(lang_code=lang)
+        return self._pipelines[lang]
+
+    def synthesize(self, text, voice):
+        chunks = []
+        for _, _, audio in self._pipeline(voice)(text, voice=voice, speed=1.0):
+            if audio is None:
+                continue
+            chunks.append(audio.detach().cpu().numpy() if hasattr(audio, "detach")
+                          else np.asarray(audio))
+        if not chunks:
+            return np.zeros(0, dtype=np.float32), self.native_rate
+        return np.concatenate(chunks).astype(np.float32), self.native_rate
+
+
 BACKENDS = {
     "piper": PiperBackend,
+    "kokoro": KokoroBackend,
     "coqui": CoquiBackend,
     "espeak": ESpeakBackend,
     "gtts": GTTSBackend,

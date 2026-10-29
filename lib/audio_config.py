@@ -65,6 +65,7 @@ AUDIO.BIT_DEPTH = 16
 #:   "piper"    - fast local neural TTS, multi-voice (recommended, no GPU needed)
 #:   "coqui"    - Coqui TTS (VITS); closest public stand-in for the paper's Match-TTS
 #:   "espeak"   - formant synthesis; ugly but dependency-free, useful for a smoke test
+#:   "kokoro"   - Kokoro-82M, natural voices, GPU-friendly (pip install kokoro; apt espeak-ng)
 #:   "gtts"     - online fallback
 AUDIO.TTS_BACKEND = "piper"
 
