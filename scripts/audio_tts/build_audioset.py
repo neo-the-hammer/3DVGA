@@ -197,6 +197,8 @@ class CoquiBackend(TTSBackend):
         import torch
         if cuda and torch.cuda.is_available():
             self._tts.to("cuda")
+        print(f"[{self.name}] device={'cuda' if cuda and torch.cuda.is_available() else 'cpu'} "
+              f"(asked for cuda={cuda}, torch sees cuda={torch.cuda.is_available()})", flush=True)
         self._voice_list = voice_list
         self.native_rate = int(self._tts.synthesizer.output_sample_rate)
 
