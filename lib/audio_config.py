@@ -66,6 +66,8 @@ AUDIO.BIT_DEPTH = 16
 #:   "coqui"    - Coqui TTS (VITS); closest public stand-in for the paper's Match-TTS
 #:   "espeak"   - formant synthesis; ugly but dependency-free, useful for a smoke test
 #:   "kokoro"   - Kokoro-82M, natural voices, GPU-friendly (pip install kokoro; apt espeak-ng)
+#:   "xtts"     - Coqui XTTS-v2, ~58 speakers, GPU (pip install coqui-tts; non-commercial licence)
+#:   "bark"     - Suno Bark presets via transformers, GPU, slow
 #:   "gtts"     - online fallback
 AUDIO.TTS_BACKEND = "piper"
 

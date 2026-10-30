@@ -156,17 +156,23 @@ class CoquiBackend(TTSBackend):
 
     DEFAULT_MODEL = "tts_models/en/vctk/vits"
 
-    def __init__(self, model_name=None, **_):
+    def __init__(self, model_name=None, voice_list=None, cuda=False, **_):
         try:
             from TTS.api import TTS
         except ImportError as exc:
             raise SystemExit(
-                "backend 'coqui' needs the TTS package:  pip install TTS\n"
+                "backend 'coqui' needs the TTS package:  pip install coqui-tts\n"
                 f"(import failed: {exc})") from exc
         self._tts = TTS(model_name or self.DEFAULT_MODEL, progress_bar=False)
+        import torch
+        if cuda and torch.cuda.is_available():
+            self._tts.to("cuda")
+        self._voice_list = voice_list
         self.native_rate = int(self._tts.synthesizer.output_sample_rate)
 
     def voices(self):
+        if self._voice_list:
+            return list(self._voice_list)
         speakers = getattr(self._tts, "speakers", None)
         if not speakers:
             return ["default"]
@@ -178,6 +184,59 @@ class CoquiBackend(TTSBackend):
         kwargs = {} if voice == "default" else {"speaker": voice}
         audio = np.asarray(self._tts.tts(text=text, **kwargs), dtype=np.float32)
         return audio, self.native_rate
+
+
+class XTTSBackend(CoquiBackend):
+    """Coqui XTTS-v2: ~58 built-in speakers, expressive, GPU. Licence CPML: non-commercial."""
+
+    name = "xtts"
+    native_rate = 24000
+    DEFAULT_MODEL = "tts_models/multilingual/multi-dataset/xtts_v2"
+    DEFAULT_VOICES = [                    # three female, three male; the last two are held out
+        "Claribel Dervla", "Andrew Chipper", "Gracie Wise", "Damien Black",
+        "Tammie Ema", "Craig Gutsy",
+    ]
+
+    def __init__(self, voice_list=None, **kw):
+        os.environ.setdefault("COQUI_TOS_AGREED", "1")      # accepts the CPML licence prompt
+        super().__init__(voice_list=voice_list or self.DEFAULT_VOICES, **kw)
+
+    def synthesize(self, text, voice):
+        audio = np.asarray(self._tts.tts(text=text, speaker=voice, language="en"), dtype=np.float32)
+        return audio, self.native_rate
+
+
+class BarkBackend(TTSBackend):
+    """Suno Bark via transformers: ten English speaker presets, GPU. Expressive but slow (seconds
+    per clip) and it can improvise on odd text -- fine for the comparison lab, rarely for 60k clips."""
+
+    name = "bark"
+    native_rate = 24000
+    DEFAULT_MODEL = "suno/bark-small"
+    DEFAULT_VOICES = [f"v2/en_speaker_{i}" for i in (6, 9, 3, 1, 5, 7)]
+
+    def __init__(self, voice_list=None, cuda=False, model_name=None, **_):
+        try:
+            import torch
+            from transformers import AutoProcessor, BarkModel
+        except ImportError as exc:
+            raise SystemExit(f"backend 'bark' needs transformers + torch ({exc})") from exc
+        self._torch = torch
+        self._device = "cuda" if (cuda and torch.cuda.is_available()) else "cpu"
+        name = model_name or self.DEFAULT_MODEL
+        self._processor = AutoProcessor.from_pretrained(name)
+        self._model = BarkModel.from_pretrained(name).to(self._device)
+        self.native_rate = int(self._model.generation_config.sample_rate)
+        self._voice_list = voice_list or self.DEFAULT_VOICES
+
+    def voices(self):
+        return list(self._voice_list)
+
+    def synthesize(self, text, voice):
+        inputs = self._processor(text, voice_preset=voice).to(self._device)
+        with self._torch.no_grad():
+            audio = self._model.generate(**inputs, do_sample=True)
+        return audio.detach().cpu().numpy().squeeze().astype(np.float32), self.native_rate
 
 
 class ESpeakBackend(TTSBackend):
@@ -300,6 +359,8 @@ class KokoroBackend(TTSBackend):
 BACKENDS = {
     "piper": PiperBackend,
     "kokoro": KokoroBackend,
+    "xtts": XTTSBackend,
+    "bark": BarkBackend,
     "coqui": CoquiBackend,
     "espeak": ESpeakBackend,
     "gtts": GTTSBackend,
