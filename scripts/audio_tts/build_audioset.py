@@ -27,6 +27,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import wave
 
@@ -39,6 +40,35 @@ from lib.config import CONF
 
 
 # --------------------------------------------------------------------------- backends
+
+
+def split_text(text, limit):
+    """Split text into pieces of at most ``limit`` characters at sentence, then comma, then word
+    boundaries. XTTS and Bark truncate or ramble on long input, so they speak it piece by piece."""
+    pieces, current = [], ""
+    parts = re.split(r"(?<=[.!?;])\s+", text.strip())
+    flat = []
+    for part in parts:
+        if len(part) <= limit:
+            flat.append(part)
+            continue
+        for sub in re.split(r"(?<=,)\s+", part):
+            while len(sub) > limit:
+                cut = sub.rfind(" ", 0, limit)
+                cut = cut if cut > 0 else limit
+                flat.append(sub[:cut])
+                sub = sub[cut:].strip()
+            if sub:
+                flat.append(sub)
+    for part in flat:
+        if current and len(current) + 1 + len(part) > limit:
+            pieces.append(current)
+            current = part
+        else:
+            current = f"{current} {part}".strip()
+    if current:
+        pieces.append(current)
+    return pieces or [text]
 
 
 class TTSBackend:
@@ -202,8 +232,9 @@ class XTTSBackend(CoquiBackend):
         super().__init__(voice_list=voice_list or self.DEFAULT_VOICES, **kw)
 
     def synthesize(self, text, voice):
-        audio = np.asarray(self._tts.tts(text=text, speaker=voice, language="en"), dtype=np.float32)
-        return audio, self.native_rate
+        pieces = [np.asarray(self._tts.tts(text=t, speaker=voice, language="en"), dtype=np.float32)
+                  for t in split_text(text, 240)]          # XTTS truncates English text beyond ~250 chars
+        return np.concatenate(pieces), self.native_rate
 
 
 class BarkBackend(TTSBackend):
@@ -233,10 +264,13 @@ class BarkBackend(TTSBackend):
         return list(self._voice_list)
 
     def synthesize(self, text, voice):
-        inputs = self._processor(text, voice_preset=voice).to(self._device)
-        with self._torch.no_grad():
-            audio = self._model.generate(**inputs, do_sample=True)
-        return audio.detach().cpu().numpy().squeeze().astype(np.float32), self.native_rate
+        pieces = []
+        for chunk in split_text(text, 160):                   # Bark speaks about 13 s at most per call
+            inputs = self._processor(chunk, voice_preset=voice).to(self._device)
+            with self._torch.no_grad():
+                audio = self._model.generate(**inputs, do_sample=True)
+            pieces.append(audio.detach().cpu().numpy().squeeze().astype(np.float32))
+        return np.concatenate(pieces), self.native_rate
 
 
 class ESpeakBackend(TTSBackend):
